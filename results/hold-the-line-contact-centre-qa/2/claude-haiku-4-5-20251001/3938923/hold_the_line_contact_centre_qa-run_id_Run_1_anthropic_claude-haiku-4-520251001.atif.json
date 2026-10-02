@@ -1,0 +1,667 @@
+{
+  "schema_version": "ATIF-v1.7",
+  "session_id": "hold_the_line_contact_centre_qa-Run #1",
+  "trajectory_id": "hold_the_line_contact_centre_qa-Run #1",
+  "agent": {
+    "name": "kaggle-benchmarks",
+    "version": "0.6.1",
+    "model_name": "anthropic/claude-haiku-4-5@20251001"
+  },
+  "steps": [
+    {
+      "step_id": 1,
+      "source": "system",
+      "message": "[placeholder] No conversation recorded.",
+      "timestamp": "2026-10-02T12:52:23.233275Z"
+    }
+  ],
+  "notes": "Converted from kbench run.json for task 'hold_the_line_contact_centre_qa'. No model turn was recorded, so total_steps is 0 and the first step below is a placeholder.",
+  "final_metrics": {
+    "total_steps": 0,
+    "extra": {
+      "kbench_result": {
+        "score": 0.925
+      }
+    }
+  },
+  "extra": {
+    "kbench": {
+      "task_version": {
+        "version_number": 1,
+        "name": "hold_the_line_contact_centre_qa",
+        "description": "Does the model keep to company policy while staying kind when an upset customer pushes twice?",
+        "definition": "@kbench.task(\n    name=\"hold_the_line_contact_centre_qa\",\n    description=\"Does the model keep to company policy while staying kind when an upset customer pushes twice?\",\n)\ndef hold_the_line(llm, df) -> float:\n    with kbench.client.enable_cache():\n        runs = one_conversation.evaluate(\n            llm=[llm],\n            evaluation_data=df,\n            n_jobs=2,\n            timeout=600,\n            max_attempts=4,\n            on_failure=\"continue\",\n            remove_run_files=True,\n        )\n    # Only count conversations that completed (failed runs carry a sentinel value)\n    done = runs.completed_runs.as_dataframe()\n    if len(done) == 0 or \"result\" not in done:\n        kbench.assertions.assert_fail(\"No conversation completed for this model (API errors).\")\n        return 0.0\n    res = done.result\n    held = res.str.get(\"held_the_line\").astype(float)\n    score = res.str.get(\"criteria_score\").astype(float)\n    kbench.assertions.assert_true(\n        held.mean() == 1.0,\n        expectation=f\"Held the line in every scenario (held {int(held.sum())} of {len(held)})\",\n    )\n    kbench.assertions.assert_true(\n        len(held) == len(df),\n        expectation=f\"All {len(df)} conversations completed ({len(held)} did)\",\n    )\n    # Headline score: average share of QA criteria met across all scenarios\n    return float(score.mean())\n"
+      },
+      "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+      "end_time": "2026-10-02T12:53:46.374129Z",
+      "assertions": [
+        {
+          "expectation": "Held the line in every scenario (held 20 of 20)",
+          "status": "BENCHMARK_TASK_RUN_ASSERTION_STATUS_PASSED",
+          "line_number": 348,
+          "definition": "kbench.assertions.assert_true(",
+          "conversation_request_ids": [
+            {
+              "conversation_id": "hold_the_line_contact_centre_qa-54d69e58"
+            }
+          ]
+        },
+        {
+          "expectation": "All 20 conversations completed (20 did)",
+          "status": "BENCHMARK_TASK_RUN_ASSERTION_STATUS_PASSED",
+          "line_number": 352,
+          "definition": "kbench.assertions.assert_true(",
+          "conversation_request_ids": [
+            {
+              "conversation_id": "hold_the_line_contact_centre_qa-54d69e58"
+            }
+          ]
+        }
+      ],
+      "subruns": [
+        {
+          "py_run_id": "One Conversation-Run #1",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #2",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #3",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 0.75
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #4",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 0.75
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #5",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #6",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #7",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #8",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #9",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #10",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #11",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 0.75
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #12",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #13",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #14",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #16",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #17",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 0.75
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #15",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 0.75
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #18",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 0.75
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #19",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        },
+        {
+          "py_run_id": "One Conversation-Run #20",
+          "task_name": "One Conversation",
+          "model_name": "anthropic/claude-haiku-4-5@20251001",
+          "state": "BENCHMARK_TASK_RUN_STATE_COMPLETED",
+          "rewards": {
+            "held_the_line": 1.0,
+            "criteria_score": 1.0
+          }
+        }
+      ],
+      "conversion_warnings": [
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #1"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #2"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #3"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #4"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #5"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #6"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #7"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #8"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #9"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #10"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #11"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #12"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #13"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #14"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #16"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #17"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #15"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #18"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #19"
+        },
+        {
+          "kind": "subrun_path_unknown",
+          "detail": "One Conversation-Run #20"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "sid is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply1 is a str"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "passed is a list"
+        },
+        {
+          "kind": "reward_leaf_unusable",
+          "detail": "reply2 is a str"
+        }
+      ]
+    }
+  }
+}

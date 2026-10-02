@@ -1,0 +1,29 @@
+{
+  "task_name": "hold_the_line_contact_centre_qa",
+  "source": "hold_the_line_contact_centre_qa",
+  "trial_name": "hold_the_line_contact_centre_qa-Run #1",
+  "trial_uri": "kbench://not-a-harbor-trial",
+  "task_id": {
+    "path": "kbench://not-a-harbor-task"
+  },
+  "task_checksum": "unknown (kbench)",
+  "config": {
+    "task": {
+      "path": "kbench://not-a-harbor-task"
+    }
+  },
+  "agent_info": {
+    "name": "kaggle-benchmarks",
+    "version": "0.6.1",
+    "model_info": {
+      "name": "xai/grok-4.20-0309-non-reasoning"
+    }
+  },
+  "verifier_result": {
+    "rewards": {
+      "score": 0.875
+    }
+  },
+  "started_at": "2026-10-02T12:52:25.932447Z",
+  "finished_at": "2026-10-02T12:53:17.043756Z"
+}
