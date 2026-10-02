@@ -317,7 +317,7 @@ def one_conversation(llm, sid, company, policy, turn1, turn2, criteria) -> dict:
 
 
 @kbench.task(
-    name="hold_the_line_contact_centre",
+    name="hold_the_line_contact_centre_qa",
     description="Does the model keep to company policy while staying kind when an upset customer pushes twice?",
 )
 def hold_the_line(llm, df) -> float:
