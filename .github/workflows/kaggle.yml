@@ -29,6 +29,8 @@ jobs:
           set +e
           case "${{ inputs.step }}" in
             push)    kaggle benchmarks tasks push "$TASK" -f hold_the_line.py --wait 3000 > out.txt 2>&1 ;;
+            example) kaggle benchmarks tasks push what-is-kaggle -f example_check.py --wait 900 > out.txt 2>&1 ;;
+            list)    kaggle benchmarks tasks list > out.txt 2>&1 ;;
             models)  kaggle benchmarks tasks models > out.txt 2>&1 ;;
             run)     args=""; for m in ${{ inputs.models }}; do args="$args -m $m"; done
                      kaggle benchmarks tasks run "$TASK" $args --wait 5400 > out.txt 2>&1 ;;
