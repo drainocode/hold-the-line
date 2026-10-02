@@ -37,6 +37,7 @@ jobs:
             download) mkdir -p results; kaggle benchmarks tasks download "$TASK" -o results -f > out.txt 2>&1 || kaggle benchmarks tasks download -h >> out.txt 2>&1; for m in $(ls results 2>/dev/null); do echo "== $m" >> out.txt; done; ls -R results | head -50 >> out.txt
                      git config user.name "results-bot"; git config user.email "results-bot@users.noreply.github.com"
                      git checkout -B results; git add -f results; git commit -qm "Run outputs" && git push -f origin results >> out.txt 2>&1 ;;
+            board)   kaggle benchmarks leaderboard mrawai/hold-the-line -s > out.txt 2>&1 ;;
             list)    kaggle benchmarks tasks list > out.txt 2>&1 ;;
             diag)    { echo "== whoami"; kaggle config view; echo "== auth"; kaggle benchmarks auth --help | head -5; kaggle benchmarks init -h | head -20; echo "== list"; kaggle benchmarks tasks list; echo "== verbose push"; kaggle benchmarks tasks push what-is-kaggle -f example_check.py -v; echo "== kernels"; kaggle kernels list --mine --page-size 5; } > out.txt 2>&1 ;;
             models)  kaggle benchmarks tasks models > out.txt 2>&1 ;;
