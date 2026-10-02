@@ -1,0 +1,46 @@
+name: Kaggle benchmark
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: "push, models, run, status, publish or leaderboard"
+        required: true
+        default: push
+      models:
+        description: "Space-separated model slugs for the run step"
+        required: false
+        default: ""
+jobs:
+  kaggle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      TASK: hold-the-line-contact-centre
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q -U kaggle jupytext
+      - name: Run step
+        shell: bash
+        run: |
+          set +e
+          case "${{ inputs.step }}" in
+            push)    kaggle benchmarks tasks push "$TASK" -f hold_the_line.py --wait 3000 > out.txt 2>&1 ;;
+            models)  kaggle benchmarks tasks models > out.txt 2>&1 ;;
+            run)     args=""; for m in ${{ inputs.models }}; do args="$args -m $m"; done
+                     kaggle benchmarks tasks run "$TASK" $args --wait 5400 > out.txt 2>&1 ;;
+            status)  kaggle benchmarks tasks status "$TASK" > out.txt 2>&1 ;;
+            publish) kaggle benchmarks tasks publish "$TASK" > out.txt 2>&1 ;;
+            *)       echo "unknown step" > out.txt ;;
+          esac
+          code=$?
+          cat out.txt
+          python3 - <<'PY'
+          t = open("out.txt").read()[-60000:]
+          t = t.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+          print(f"::notice title=result::{t}")
+          PY
+          exit $code
