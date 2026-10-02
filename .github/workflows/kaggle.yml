@@ -10,6 +10,8 @@ on:
         description: "Space-separated model slugs for the run step"
         required: false
         default: ""
+permissions:
+  contents: write
 jobs:
   kaggle:
     runs-on: ubuntu-latest
@@ -32,6 +34,9 @@ jobs:
             example) kaggle benchmarks tasks push what-is-kaggle -f example_check.py --wait 900 > out.txt 2>&1 ;;
             diag2)   { echo "== init"; kaggle benchmarks init -y --env-file /tmp/kb.env --example-file /tmp/ex.py; grep -v KEY /tmp/kb.env; echo "== fresh push"; sed "s/What is Kaggle?/Hello check two/" example_check.py > hello_check_two.py; kaggle benchmarks tasks push hello-check-two -f hello_check_two.py -v; echo "== status"; kaggle benchmarks tasks status hold-the-line-contact-centre; } > out.txt 2>&1 ;;
             reset)   { echo "== init"; kaggle benchmarks init -y --env-file /tmp/kb.env --example-file /tmp/ex.py 2>&1 | head -5; echo "== delete broken"; for s in hold-the-line-contact-centre what-is-kaggle hello-check-two; do yes | kaggle benchmarks tasks delete $s 2>&1 | tail -2; done; echo "== push"; kaggle benchmarks tasks push "$TASK" -f hold_the_line.py --wait 3000; } > out.txt 2>&1 ;;
+            download) mkdir -p results; kaggle benchmarks tasks download "$TASK" -o results -f > out.txt 2>&1 || kaggle benchmarks tasks download -h >> out.txt 2>&1; for m in $(ls results 2>/dev/null); do echo "== $m" >> out.txt; done; ls -R results | head -50 >> out.txt
+                     git config user.name "results-bot"; git config user.email "results-bot@users.noreply.github.com"
+                     git checkout -B results; git add -f results; git commit -qm "Run outputs" && git push -f origin results >> out.txt 2>&1 ;;
             list)    kaggle benchmarks tasks list > out.txt 2>&1 ;;
             diag)    { echo "== whoami"; kaggle config view; echo "== auth"; kaggle benchmarks auth --help | head -5; kaggle benchmarks init -h | head -20; echo "== list"; kaggle benchmarks tasks list; echo "== verbose push"; kaggle benchmarks tasks push what-is-kaggle -f example_check.py -v; echo "== kernels"; kaggle kernels list --mine --page-size 5; } > out.txt 2>&1 ;;
             models)  kaggle benchmarks tasks models > out.txt 2>&1 ;;
