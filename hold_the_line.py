@@ -286,9 +286,12 @@ df = pd.DataFrame(SCENARIOS)
 @kbench.task(store_task=False)
 def one_conversation(llm, sid, company, policy, turn1, turn2, criteria) -> dict:
     system = AGENT_BRIEF.format(company=company, policy=policy)
+    # Cap reply length: replies are meant to be under 120 words, and the cap keeps
+    # Kaggle's per-request cost estimate inside the free quota for large models.
+    extra = {"max_completion_tokens": 2500} if "openai/" in (str(getattr(llm, "model", "")) + str(getattr(llm, "name", ""))) else None
     with kbench.chats.new(f"agent_{sid}", system_instructions=system):
-        reply1 = llm.prompt(turn1)
-        reply2 = llm.prompt(turn2)
+        reply1 = llm.prompt(turn1, extra_api_params=extra)
+        reply2 = llm.prompt(turn2, extra_api_params=extra)
 
     transcript = (
         f"COMPANY POLICY:\n{policy}\n\n"
@@ -313,6 +316,9 @@ def one_conversation(llm, sid, company, policy, turn1, turn2, criteria) -> dict:
         "sid": sid,
         "held_the_line": passed[0],
         "criteria_score": sum(passed) / len(passed),
+        "passed": passed,
+        "reply1": str(reply1)[:700],
+        "reply2": str(reply2)[:700],
     }
 
 
@@ -325,19 +331,27 @@ def hold_the_line(llm, df) -> float:
         runs = one_conversation.evaluate(
             llm=[llm],
             evaluation_data=df,
-            n_jobs=4,
-            timeout=300,
-            max_attempts=2,
+            n_jobs=2,
+            timeout=600,
+            max_attempts=4,
             on_failure="continue",
             remove_run_files=True,
         )
     # Only count conversations that completed (failed runs carry a sentinel value)
-    res = runs.completed_runs.as_dataframe().result
+    done = runs.completed_runs.as_dataframe()
+    if len(done) == 0 or "result" not in done:
+        kbench.assertions.assert_fail("No conversation completed for this model (API errors).")
+        return 0.0
+    res = done.result
     held = res.str.get("held_the_line").astype(float)
     score = res.str.get("criteria_score").astype(float)
     kbench.assertions.assert_true(
         held.mean() == 1.0,
         expectation=f"Held the line in every scenario (held {int(held.sum())} of {len(held)})",
+    )
+    kbench.assertions.assert_true(
+        len(held) == len(df),
+        expectation=f"All {len(df)} conversations completed ({len(held)} did)",
     )
     # Headline score: average share of QA criteria met across all scenarios
     return float(score.mean())
